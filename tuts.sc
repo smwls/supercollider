@@ -1,3 +1,4 @@
+
 SuperDirt.start
 
 {Pan2.ar(SinOsc.ar(4400, 0,0.1),0.0)}.play
@@ -568,3 +569,227 @@ var tempoclock = TempoClock(1.1);
 	}
 }.fork(tempoclock)
 )
+
+
+
+
+
+
+{EnvGen.ar(Env([0,1],[1], 'step'),Impulse.kr(50))}.plot(2)
+[0,1,2,0,0.5,-0.5,-0.3,0,2]
+[1, 0.1,0.5, 0.3,2,0.2, 0.2,0.2]
+{Pan2.ar(SinOsc.ar(79*EnvGen.ar(Env([0,1,2,0,0.5,-0.5,-0.3,0,2]+2.1,[1, 0.1,0.5, 0.3,2,0.2, 0.2,0.2], 'step'),Impulse.kr(0.2)).lag(0.3), 0, 0.1))}.scope
+
+{SinOsc.ar(400*(1+EnvGen.ar(Env([0,1,0,0.5,-0.4],0.1!4,curve:\step),Impulse.kr(2.5))))}.play
+
+{Pan2.ar(SinOsc.ar([70,67,50,60].midicps*EnvGen.ar(Env([],0.125!4,curve:\step),Impulse.kr(2))))}.play
+
+SynthDef(\perc,
+
+{
+arg rate=3, freq=110, attack=0.01, release=0.02;
+var sound,env, trig;
+
+
+
+trig= Impulse.ar(rate); //trigger source
+
+
+
+sound= Mix(LFPulse.ar(freq*[1,5/2],0.0,0.5,0.2));
+
+
+
+env= EnvGen.ar(Env.perc(attack,release),trig); //with retriggering controlled by impulse
+
+
+
+Out.ar(0,Pan2.ar(sound*env,0.0))
+
+}
+
+).add
+
+a=Synth(\perc,[\rate:3.1,\freq:110,\attack:0.01,\release:0.2])
+b=Synth(\perc,[\rate:3.5,\freq:440,\attack:0.01,\release:0.2])
+c=Synth(\perc,[\rate:3,\freq:880,\attack:0.01,\release:0.2])
+d=Synth(\perc,[\rate:3,\freq:660,\attack:0.02,\release:0.2])
+e=Synth(\perc,[\rate:4,\freq:220,\attack:0.1,\release:0.2])
+f=Synth(\perc,[\rate:4,\freq:215,\attack:0.1,\release:0.2])
+g=Synth(\perc,[\rate:8,\freq:100,\attack:0.01,\release:0.2])
+h=Synth(\perc,[\rate:4,\freq:60.midicps,\attack:0.01,\release:0.2])
+i=Synth(\perc,[\rate:1,\freq:50,\attack:0.05,\release:0.01])
+a.free
+b.free
+c.free
+d.free
+e.free
+f.free
+g.free
+i.free
+h.free
+h.set(\rate,1.5, \freq,100,\attack,0.05);g.set(\rate,1.75,\freq,75,\attack,0.05);h.set(\rate,1.875,\freq,100,\attack,0.05);
+g.set(\freq,100)
+h.set(\freq,101)
+
+39.midicps
+
+
+
+(
+
+{
+
+var sound,env, trig;
+
+
+
+//> is itself a UGen when used in this context; it is outputting the result of comparing the LFNoise0 with the value 0 every sample!
+
+trig= LFNoise0.ar(13)>0; //trigger source (might also use Dust, for example)
+30,40,56,63
+	32,42,51,60
+
+
+{
+	var ch1 = [30,40,56,63];
+	var ch2 = [25,42,51,60];
+	var ch3 = [25,45,56,61];
+	var chord = Select.kr(Stepper.kr(Impulse.kr(0.4,0.1),0,0,3,1),[ch1,ch1,ch2,ch2]);
+	Pan2.ar(Mix.ar(Ringz.ar(Saw.ar(chord.midicps.lag(0.8),0.1),SinOsc.ar(0.05,0,250,500),0.01)))
+}.play
+
+//TRand chooses a random number in its range when triggered
+
+sound= Mix(LFPulse.ar(110*[1,5/2,TRand.ar(3.9,4.1,trig)],0.0,0.5,0.2));
+
+
+
+env= EnvGen.ar(Env.perc(0.02,0.1),trig); //with retriggering controlled by impulse
+
+
+
+Pan2.ar(sound*env,0.0)
+
+}.play
+
+)
+[1,2]++[3,4]
+
+{Pan2.ar(Mix.ar(Saw.ar(round([MouseX.kr(40,45), MouseX.kr(30,35),MouseY.kr(50,60),MouseY.kr(60,65)]).midicps, 0.1)))}.play;
+42,32,51,61
+round(1.2)
+
+
+(
+
+{
+
+var source;
+
+
+
+source= LFNoise0.ar(10);
+
+
+
+[
+
+	source,			//step
+
+	source.lag(0.1)	//step with lag of period; so only gets to target value at end of step
+
+]
+
+}.plot(1.0)
+
+)
+
+{Saw.ar((Stepper.ar(Impulse.ar(10),0,1,10,1)*200).lag(MouseX.kr(0.0,0.2)))}.play
+
+{Pan2.ar(Ringz.ar(Saw.ar(LFNoise0.kr(5).lag(MouseX.kr(0.01,0.3)).exprange(100,2000).round(20),0.2), 1000, 0.01))}.play
+
+{Ringz.ar(Saw.ar(LFNoise0.kr(5).lag(0.1).exprange(100,2000),0.2), 1000, 0.01)}.play
+
+(
+
+{
+
+	Decay.ar(Impulse.ar(100),0.01)
+
+}.plot(0.1)
+
+)
+
+/*Sequencing and event reactive functionality can be constructed with other UGens like Index, IEnvGen, PulseCount, PulseDivider, ToggleFF, SetResetFF, Timer, Schmidt and more*/
+
+
+(
+
+{
+
+
+
+	4.do{arg j;
+
+
+
+		//nested sequence, create another fork
+
+		{
+
+
+
+			8.do{arg i;
+
+
+
+				Synth(\event, [\freq,(48+(i*3.3)+j).midicps,\amp, (1.0-(i/8))]);
+
+				0.5.wait;
+
+			}
+
+
+
+		}.fork;
+
+
+
+		4.0.wait; //outer fork must wait for inner fork to do its work
+
+	}
+
+}.fork;
+
+)
+(1 + [1,2,3]) ++ (6+1 + [4,5,6])
+60.midicps
+
+SynthDef(\ust,{
+	arg frt=c,srt=c+mi13, ftt=1,stt=1,fst=0,rate=10,lag=0,vol=0.1;
+	var c = 60, cs = 61, d=62, eb=63, e=64,f=65,fs=66,g=67,ab=68,a=69,bb=70,b=71;
+	var tn = 0, mi9 = 1, ma9=2,mi3=3,ma3=4,p11=5,b5=6,s11=6,p5=7,mi13=8,ma13=9,mi7=10,ma7=11,ov=12;
+	// var root = c-ov;
+	var chord = (frt + [tn,mi3+ftt,p5,mi7+fst]) ++ (ov + (srt) + [tn,mi3+stt,p5,ov]);
+
+	var freqs = Select.kr(rate>0, [chord.midicps, Select.kr(Stepper.kr(Impulse.kr(rate,0.1),0,0,7,1 ),chord).midicps]);
+
+	Out.ar(0,Pan2.ar(Mix.ar(SinOsc.ar(freqs.lag(lag),0,vol))))
+
+}).add
+	var c = 60, cs = 61, d=62, eb=63, e=64,f=65,fs=66,g=67,ab=68,a=69,bb=70,b=71;
+	var tn = 0, mi9 = 1, ma9=2,mi3=3,ma3=4,p11=5,b5=6,s11=6,p5=7,mi13=8,ma13=9,mi7=10,ma7=11,ov=12;
+
+c.stop
+(
+a=Synth(\ust, [\frt:49,srt:38,\ftt:1,\stt:1,fst:0,\rate:1,\lag:0,\vol:0.2]);
+b=Synth(\ust, [\frt:49,srt:38,\ftt:1,\stt:1,fst:0,\rate:2,\lag:0]);
+c=Synth(\ust, [\frt:49,srt:38,\ftt:1,\stt:1,fst:0,\rate:1.5,\lag:0]);
+d=Synth(\ust, [\frt:61,srt:50,\ftt:1,\stt:1,fst:0,\rate:1,\lag:1,\vol:0.05]);
+e=Synth(\ust, [\frt:49,srt:38,\ftt:1,\stt:1,fst:0,\rate:0,\lag:0,\vol:0])
+)
+e.set(\vol,0.2)
+a.set(\vol,0.2,\rate,0,\frt,53);b.set(\vol,0.1,\rate,0,\frt,56);c.set(\frt,58,\vol,0.1,\rate,0);d.set(\vol,0.05,\lag,0,\frt,52,\srt,52,\rate,0);e.set(\frt,38,\srt,40)
+
+

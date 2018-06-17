@@ -1,3 +1,4 @@
+SuperDirt.start
 {
 	var left;
 	var right;
